@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkVault - All Notes</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .filter-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 fade-in">
+            <h2 class="fw-bold mb-0">All Notes</h2>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" onclick="Notes.exportData()" title="Export as JSON">
+                    <i class="bi bi-download"></i>
+                </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#noteModal" data-shortcut="n">
+                    <i class="bi bi-plus-lg me-1"></i> New Note (N)
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-glass fade-in">
+            <form id="filterForm" class="row g-3 align-items-center">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchWord" placeholder="Search title or content...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filterCategory">
+                        <option value="">All Categories</option>
+                        <!-- Categories populated here -->
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" role="switch" id="filterPinned">
+                        <label class="form-check-label" for="filterPinned">Pinned Only</label>
+                    </div>
+                </div>
+                <div class="col-md-auto ms-auto d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="Notes.clearFilters()">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="row fade-in">
+            <div class="col-12">
+                <div class="table-container">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light pe-none">
+                            <tr>
+                                <th scope="col" width="5%" class="text-center"><i class="bi bi-pin-angle-fill text-muted"></i></th>
+                                <th scope="col" width="25%">Title</th>
+                                <th scope="col" width="35%">Content</th>
+                                <th scope="col" width="15%">Category</th>
+                                <th scope="col" width="20%" class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notesTableBody">
+                            <!-- Notes will be rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="paginationContainer" class="mt-4"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create/Edit Note Modal -->
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card p-0">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="noteModalLabel">New Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="noteForm">
+                    <div class="modal-body">
+                         <input type="hidden" id="noteId">
+                         <div class="mb-3">
+                            <label for="noteTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="noteTitle" required placeholder="Note Title">
+                         </div>
+                         <div class="mb-3">
+                            <label for="noteCategory" class="form-label">Category</label>
+                            <select class="form-select" id="noteCategory" required>
+                                <option value="" disabled selected>Select a category</option>
+                                <!-- Categories populated here -->
+                            </select>
+                         </div>
+                         <div class="mb-0">
+                            <label for="noteContent" class="form-label">Content</label>
+                            <textarea class="form-control" id="noteContent" rows="4" required placeholder="Write your thoughts..."></textarea>
+                         </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-link text-muted text-decoration-none" data-bs-dismiss="modal">Cancel (Esc)</button>
+                        <button type="submit" class="btn btn-primary" id="saveNoteBtn">
+                            <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+                            Save Note
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS API -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/notes.js"></script>
+</body>
+</html>

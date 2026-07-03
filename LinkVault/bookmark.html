@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkVault - Bookmark Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .note-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .note-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glass-shadow);
+        }
+        .bookmark-header {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-hover));
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container py-5">
+        
+        <div class="mb-4 fade-in">
+            <a href="bookmarks.html" class="text-decoration-none text-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Bookmarks
+            </a>
+        </div>
+
+        <div class="bookmark-header shadow-sm fade-in" id="bookmarkHeader" style="display: none;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2 class="fw-bold mb-2" id="bdTitle">Loading...</h2>
+                    <a href="#" target="_blank" id="bdUrl" class="text-white text-decoration-none d-flex align-items-center gap-2 opacity-75 hover-opacity-100 transition">
+                        <i class="bi bi-link-45deg fs-4"></i> <span id="bdUrlText">Loading...</span>
+                    </a>
+                </div>
+                <span class="badge bg-light text-primary fs-6 py-2 px-3" id="bdCategory">Category</span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 fade-in">
+            <h4 class="fw-bold mb-0">Notes</h4>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#noteModal" data-shortcut="n">
+                <i class="bi bi-plus-lg me-1"></i> Add Note (N)
+            </button>
+        </div>
+
+        <div class="row g-4 fade-in" id="notesContainer">
+            <!-- Notes will be injected here -->
+        </div>
+
+    </main>
+
+    <!-- Create/Edit Note Modal -->
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card p-0">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="noteModalLabel">Add Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="noteForm">
+                    <div class="modal-body">
+                         <div class="mb-3 d-none" id="titleGroup">
+                            <label for="noteTitle" class="form-label">Note Title</label>
+                            <input type="text" class="form-control" id="noteTitle" placeholder="Optional title">
+                         </div>
+                         <div class="mb-0">
+                            <label for="noteContent" class="form-label">Note Content</label>
+                            <textarea class="form-control" id="noteContent" rows="4" required placeholder="Write your thoughts about this bookmark..."></textarea>
+                         </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-link text-muted text-decoration-none" data-bs-dismiss="modal">Cancel (Esc)</button>
+                        <button type="submit" class="btn btn-primary" id="saveNoteBtn">
+                            <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+                            Save Note
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS API -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/bookmark_details.js"></script>
+</body>
+</html>
