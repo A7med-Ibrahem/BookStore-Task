@@ -1,0 +1,288 @@
+-- =============================================
+-- BookStore Database
+-- =============================================
+
+-- =============================================
+-- TASK 1: Database Schema
+-- =============================================
+
+CREATE DATABASE BookStore;
+GO
+
+USE BookStore;
+GO
+
+CREATE TABLE Customers (
+    CustomerID   INT IDENTITY(1,1) PRIMARY KEY,
+    FullName     NVARCHAR(100) NOT NULL,
+    Email        NVARCHAR(100) NOT NULL UNIQUE,
+    City         NVARCHAR(50),
+    CreatedAt    DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Authors (
+    AuthorID    INT IDENTITY(1,1) PRIMARY KEY,
+    AuthorName  NVARCHAR(100) NOT NULL,
+    Country     NVARCHAR(50)
+);
+
+CREATE TABLE Categories (
+    CategoryID   INT IDENTITY(1,1) PRIMARY KEY,
+    CategoryName NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Books (
+    BookID       INT IDENTITY(1,1) PRIMARY KEY,
+    Title        NVARCHAR(200) NOT NULL,
+    Price        DECIMAL(10,2) NOT NULL CHECK (Price > 0),
+    Stock        INT NOT NULL DEFAULT 0 CHECK (Stock >= 0),
+    AuthorID     INT REFERENCES Authors(AuthorID),
+    CategoryID   INT REFERENCES Categories(CategoryID)
+);
+
+CREATE TABLE Orders (
+    OrderID      INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerID   INT REFERENCES Customers(CustomerID),
+    OrderDate    DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE OrderItems (
+    OrderItemID  INT IDENTITY(1,1) PRIMARY KEY,
+    OrderID      INT REFERENCES Orders(OrderID),
+    BookID       INT REFERENCES Books(BookID),
+    Quantity     INT NOT NULL CHECK (Quantity > 0),
+    PriceAtTime  DECIMAL(10,2) NOT NULL
+);
+GO
+
+-- =============================================
+-- TASK 2: Sample Data
+-- =============================================
+
+INSERT INTO Categories (CategoryName) VALUES
+('Fiction'), ('Science'), ('History'),
+('Programming'), ('Self-Help'), ('Biography'), ('Fantasy');
+
+INSERT INTO Authors (AuthorName, Country) VALUES
+('Ahmed Khaled', 'Egypt'), ('Sara Ali', 'Saudi Arabia'),
+('John Smith', 'USA'), ('Emily Brown', 'UK'),
+('Mohamed Hassan', 'Egypt'), ('Lisa Johnson', 'USA'),
+('Omar Youssef', 'Jordan');
+
+INSERT INTO Books (Title, Price, Stock, AuthorID, CategoryID) VALUES
+('The Lost City',        120.00, 50,  1, 1),
+('Space Explorations',   200.00, 30,  3, 2),
+('Ancient Egypt',        150.00, 45,  5, 3),
+('Learn C#',             250.00, 60,  6, 4),
+('Think Better',          90.00, 80,  2, 5),
+('Elon Musk Story',      180.00, 25,  4, 6),
+('Dragon Kingdom',       110.00, 55,  7, 7),
+('Python Basics',        230.00, 40,  6, 4),
+('World War II',         160.00, 35,  3, 3),
+('The Magic Forest',     100.00, 70,  7, 7),
+('Clean Code',           270.00, 20,  4, 4),
+('Mind Power',            85.00, 90,  2, 5),
+('Desert Storm',         130.00, 48,  1, 1),
+('Biology Today',        190.00, 33,  3, 2),
+('Napoleon Life',        170.00, 28,  5, 6),
+('Java Basics',          220.00, 40,  3, 4),
+('Data Structures',      240.00, 35,  6, 4),
+('Web Development',      210.00, 45,  4, 4),
+('Database Design',      260.00, 30,  6, 4);
+
+INSERT INTO Customers (FullName, Email, City) VALUES
+('Ahmed Mohamed',   'ahmed@email.com',   'Cairo'),
+('Sara Hassan',     'sara@email.com',    'Alexandria'),
+('Mohamed Ali',     'mohamed@email.com', 'Cairo'),
+('Nour Ibrahim',    'nour@email.com',    'Giza'),
+('Omar Khaled',     'omar@email.com',    'Cairo'),
+('Layla Ahmed',     'layla@email.com',   'Alexandria'),
+('Youssef Salem',   'youssef@email.com', 'Luxor'),
+('Hana Mostafa',    'hana@email.com',    'Cairo'),
+('Kareem Nasser',   'kareem@email.com',  'Giza'),
+('Dina Fathy',      'dina@email.com',    'Alexandria'),
+('Tarek Samir',     'tarek@email.com',   'Aswan'),
+('Rania Adel',      'rania@email.com',   'Cairo');
+
+INSERT INTO Orders (CustomerID, OrderDate) VALUES
+(1,  '2024-01-15'), (2,  '2024-01-20'),
+(3,  '2024-02-10'), (4,  '2024-02-25'),
+(5,  '2024-03-05'), (1,  '2024-03-18'),
+(6,  '2024-04-02'), (7,  '2024-04-15'),
+(3,  '2024-05-01'), (8,  '2024-05-20'),
+(2,  '2024-06-10'), (9,  '2024-06-25'),
+(1,  '2024-07-08'), (5,  '2024-07-22'),
+(10, '2024-08-05');
+
+INSERT INTO OrderItems (OrderID, BookID, Quantity, PriceAtTime) VALUES
+(1,  1,  2, 120.00), (1,  3,  1, 150.00),
+(2,  5,  3,  90.00), (2,  7,  1, 110.00),
+(3,  2,  1, 200.00), (3,  4,  2, 250.00),
+(4,  6,  1, 180.00), (4,  8,  1, 230.00),
+(5,  11, 1, 270.00), (5,  1,  2, 120.00),
+(6,  9,  1, 160.00), (6,  12, 2,  85.00),
+(7,  3,  1, 150.00), (7,  10, 3, 100.00),
+(8,  4,  1, 250.00), (9,  2,  2, 200.00),
+(9,  5,  1,  90.00), (10, 11, 1, 270.00),
+(10, 6,  1, 180.00), (11, 8,  2, 230.00),
+(11, 1,  1, 120.00), (12, 4,  3, 250.00),
+(13, 11, 1, 270.00), (13, 9,  1, 160.00),
+(14, 7,  2, 110.00), (14, 3,  1, 150.00),
+(15, 5,  2,  90.00), (15, 2,  1, 200.00);
+GO
+
+-- =============================================
+-- TASK 3: List all books sorted by price
+-- =============================================
+
+SELECT Title, Price
+FROM Books
+ORDER BY Price DESC;
+GO
+
+-- =============================================
+-- TASK 4: Uppercase titles & lowercase authors
+-- =============================================
+
+SELECT UPPER(B.Title)      AS BookTitle,
+       LOWER(A.AuthorName) AS AuthorName
+FROM Books B
+JOIN Authors A ON B.AuthorID = A.AuthorID;
+GO
+
+-- =============================================
+-- TASK 5: Books with category and author
+-- =============================================
+
+SELECT B.Title        AS BookTitle,
+       C.CategoryName AS Category,
+       A.AuthorName   AS Author
+FROM Books B
+JOIN Categories C ON B.CategoryID = C.CategoryID
+JOIN Authors    A ON B.AuthorID   = A.AuthorID;
+GO
+
+-- =============================================
+-- TASK 6: Customers with number of purchases
+-- =============================================
+
+SELECT C.FullName       AS CustomerName,
+       COUNT(O.OrderID) AS NumberOfPurchases
+FROM Customers C
+LEFT JOIN Orders O ON C.CustomerID = O.CustomerID
+GROUP BY C.CustomerID, C.FullName
+ORDER BY NumberOfPurchases DESC;
+GO
+
+-- =============================================
+-- TASK 7: Top 5 best-selling books
+-- =============================================
+
+SELECT TOP 5
+       B.Title          AS BookTitle,
+       SUM(OI.Quantity) AS TotalSold
+FROM Books B
+JOIN OrderItems OI ON B.BookID = OI.BookID
+GROUP BY B.BookID, B.Title
+ORDER BY TotalSold DESC;
+GO
+
+-- =============================================
+-- TASK 8: City with highest number of customers
+-- =============================================
+
+SELECT TOP 1
+       City,
+       COUNT(CustomerID) AS NumberOfCustomers
+FROM Customers
+GROUP BY City
+ORDER BY NumberOfCustomers DESC;
+GO
+
+-- =============================================
+-- TASK 9: Categories with more than 5 books
+-- =============================================
+
+SELECT C.CategoryName  AS Category,
+       COUNT(B.BookID) AS NumberOfBooks
+FROM Categories C
+JOIN Books B ON C.CategoryID = B.CategoryID
+GROUP BY C.CategoryID, C.CategoryName
+HAVING COUNT(B.BookID) > 5;
+GO
+
+-- =============================================
+-- TASK 10: Books above average price
+-- =============================================
+
+SELECT Title, Price
+FROM Books
+WHERE Price > (SELECT AVG(Price) FROM Books)
+ORDER BY Price DESC;
+GO
+
+-- =============================================
+-- TASK 11: Customers with no purchases
+-- =============================================
+
+SELECT C.FullName AS CustomerName,
+       C.Email    AS Email
+FROM Customers C
+WHERE C.CustomerID NOT IN (
+    SELECT DISTINCT CustomerID
+    FROM Orders
+);
+GO
+
+-- =============================================
+-- TASK 12: Total revenue per month
+-- =============================================
+
+SELECT YEAR(O.OrderDate)                 AS Year,
+       MONTH(O.OrderDate)                AS Month,
+       SUM(OI.Quantity * OI.PriceAtTime) AS TotalRevenue
+FROM Orders O
+JOIN OrderItems OI ON O.OrderID = OI.OrderID
+GROUP BY YEAR(O.OrderDate), MONTH(O.OrderDate)
+ORDER BY Year, Month;
+GO
+
+-- =============================================
+-- TASK 13: View for book details
+-- =============================================
+
+CREATE VIEW BookDetails AS
+SELECT B.Title        AS BookTitle,
+       C.CategoryName AS Category,
+       A.AuthorName   AS Author,
+       B.Price        AS Price
+FROM Books B
+JOIN Categories C ON B.CategoryID = C.CategoryID
+JOIN Authors    A ON B.AuthorID   = A.AuthorID;
+GO
+
+-- =============================================
+-- TASK 14: Stored procedure for customer purchases
+-- =============================================
+
+CREATE PROCEDURE GetCustomerPurchases
+    @CustomerID INT
+AS
+BEGIN
+    SELECT O.OrderID,
+           O.OrderDate,
+           B.Title                      AS BookTitle,
+           OI.Quantity,
+           OI.PriceAtTime,
+           OI.Quantity * OI.PriceAtTime AS SubTotal
+    FROM Orders O
+    JOIN OrderItems OI ON O.OrderID = OI.OrderID
+    JOIN Books B       ON OI.BookID = B.BookID
+    WHERE O.CustomerID = @CustomerID
+
+    SELECT SUM(OI.Quantity * OI.PriceAtTime) AS TotalAmount
+    FROM Orders O
+    JOIN OrderItems OI ON O.OrderID = OI.OrderID
+    WHERE O.CustomerID = @CustomerID
+END;
+GO
